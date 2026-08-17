@@ -1,0 +1,23 @@
+name: FXw USDJPY V1 Backtest
+on:
+  push:
+    branches: [fxw-backtest-v1-validation-20260817]
+  workflow_dispatch:
+jobs:
+  backtest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install --disable-pip-version-check pandas
+      - name: Run frozen V1 backtest
+        run: python fxw_backtest_v1.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: fxw-backtest-results
+          path: backtest_results.json
+          if-no-files-found: warn
